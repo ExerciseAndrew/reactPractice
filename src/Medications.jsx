@@ -5,36 +5,29 @@ import JsonData from './products.json';
 
 const Medications = () => {
   const [q, setQ] = useState("")
-  const meds = !q ? JsonData.map((med) => {
-    return (
-      <ul>
-        {med.name}
-      </ul>
-    )
-  }) : JsonData.filter((med) => {
-    return (
-      med.location === "SF" && med.name.toLower().includes(q.toLower())
-    )
-  }).map((med) => {
-    return (
-      <ul>
-        {med.name}
-      </ul>
-    )
-  })
-  // const filtered = () => {
-  //   return (
-  //   meds.filter((med) => {
-  //     return (
-  //       med.facility === "SF" && med.name.toLower().includes(q.toLower())
-  //     )
-  //   })
-  //   )
-  // }
+  const [meds, setMeds] = useState([])
+
+
+  useEffect(() => {
+    setMeds(JsonData)
+  }, [])
+
+  const filterFunction = (query) => {
+    console.log('running')
+    query.length>0?
+    setMeds(
+      JsonData.filter((med) => {
+        return (
+          med.name.toLowerCase().includes(q.toLowerCase())
+        )
+      }).filter((med) => (med.facility === "SF"))
+    ):setMeds(JsonData)
+  }
 
   const handleSearchChange = (event) => {
     event.preventDefault()
     setQ(event.target.value);
+    filterFunction(event.target.value)
   }
   return (
 
@@ -45,7 +38,13 @@ const Medications = () => {
   value={q}
   placeholder="Search"
   onChange={handleSearchChange}/>
-  {meds}
+  {meds.map((med) => {
+    return (
+      <ul>
+        {med.name}: {med.facility}
+      </ul>
+    )
+  })}
   </>
   )
 }
