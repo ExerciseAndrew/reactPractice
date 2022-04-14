@@ -1,34 +1,52 @@
 import {React, useState, useEffect} from 'react';
 import JsonData from './products.json';
-import Search from './Search.jsx'
+// import Search from './Search.jsx'
 
 
 const Medications = () => {
-  const [list, setList] = useState([]);
-
-  useEffect(() => {
-    setList(JsonData)
-  }, [])
-
-  function filterFunction (query) { (list.filter((item) => {
-    console.log(item.facility === "SF" && item.name.includes(query) ? item.name : "nothing")
-  })
-)}
-  const products = list.map((medication) => {
+  const [q, setQ] = useState("")
+  const meds = !q ? JsonData.map((med) => {
     return (
-    <li>
-      {medication.name}
-    </li>
+      <ul>
+        {med.name}
+      </ul>
+    )
+  }) : JsonData.filter((med) => {
+    return (
+      med.location === "SF" && med.name.toLower().includes(q.toLower())
+    )
+  }).map((med) => {
+    return (
+      <ul>
+        {med.name}
+      </ul>
     )
   })
+  // const filtered = () => {
+  //   return (
+  //   meds.filter((med) => {
+  //     return (
+  //       med.facility === "SF" && med.name.toLower().includes(q.toLower())
+  //     )
+  //   })
+  //   )
+  // }
 
+  const handleSearchChange = (event) => {
+    event.preventDefault()
+    setQ(event.target.value);
+  }
   return (
-    <div>
-    <Search filterFunction={filterFunction} list={list}/>
 
-    <div>{products}</div>
-    </div>
-
+  <>
+  <h2>MEDS</h2>
+  <input
+  type="text"
+  value={q}
+  placeholder="Search"
+  onChange={handleSearchChange}/>
+  {meds}
+  </>
   )
 }
   export default Medications;
